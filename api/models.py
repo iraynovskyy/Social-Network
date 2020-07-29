@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
-
+# from django.contrib.auth.models import User
+from account.models import Account
 
 class Post(models.Model):
     title = models.CharField(max_length=300, unique=True)
@@ -14,7 +14,7 @@ class Post(models.Model):
 
 
 class Preference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     value = models.IntegerField()
     date = models.DateTimeField(auto_now=True)

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from django.contrib.auth.models import User, auth
+from django.contrib.auth.models import auth  #, User
+from account.models import Account
 from django.contrib import messages
 from .models import Post, Preference
 
@@ -36,27 +37,30 @@ def user_signup(request):
         email = request.POST['email']
 
         if password1 == password2:
-            if User.objects.filter(username=username).exists():
+            if Account.objects.filter(username=username).exists():
                 print('Username taken')
-            elif User.objects.filter(email=email).exists():
+                return Response(f"Username '{username}' is already taken.")
+            elif Account.objects.filter(email=email).exists():
                 print('email taken')
+                return Response(f"Email '{email}' is already taken.")
             else:
-                user = User.objects.create_user(username=username, password=password1, email=email)
+                user = Account.objects.create_user(username=username, password=password1, email=email)
                 user.save()
                 print('user created')
 
         else:
-            print('password not matching...')
-        return Response('User is successfully created!')
+            print('Passwords not matching...')
+            return Response('Passwords not matching...!')
 
+        return Response(f"User '{username}' created successfully!")
 
 @api_view(["POST", "GET"])
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
 
-        user = auth.authenticate(username=username, password=password)
+        user = auth.authenticate(email=email, password=password)
 
         if user is not None:
             auth.login(request, user)
@@ -175,8 +179,6 @@ def postpreference(request, postid, userpreference):
 
             context = {'eachpost': eachpost,
                        'postid': postid}
-            print('lalala', type(eachpost))
-            print('lalala2', postid)
 
             # return Response({'Message': 'Well Done Like/Dislike!'})
             return Response({'eachpost': str(eachpost), 'postid': postid})
@@ -216,12 +218,12 @@ def analytics(request):
 @api_view(["GET"])
 def user_activity(request, user_id):
     if request.method == 'GET':
-        user_name = User.objects.get(id=user_id)
+        user_name = Account.objects.get(id=user_id)
         date_joined = user_name.date_joined
         last_login = user_name.last_login
 
         return JsonResponse({
-                             'User name': str(user_name),
-                             'date_joined': str(date_joined),
+                             'User email': str(user_name),
+                             'date joined': str(date_joined),
                              'last login': str(last_login)
                              })
