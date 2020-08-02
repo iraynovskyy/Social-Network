@@ -1,4 +1,29 @@
-### Requirements:
+#### Info:
+It's a simple REST API written on Django Rest Framework.
+
+#### Basic models:
+User (Custom User model)
+
+Post (user authentication is needed) / JWT token is implemented.
+
+#### Basic Features:
+user signup
+
+user login
+
+post creation
+
+post like/dislike
+
+analytics about likes
+
+user activity details
+
+
+
+
+
+#### Requirements:
 
 asgiref==3.2.10
 
